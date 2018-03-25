@@ -1,0 +1,10 @@
+I chose this article to attach a visualization to https://www.seattletimes.com/opinion/affordable-housing-in-seattle-is-not-the-enemy/.
+For this assignment I used the City of Seattle Rent and Income Restricted Housing
+Dataset (https://data.seattle.gov/Community/Rent-and-Income-Restricted-Housing/b6zn-zsin)
+to create a map of where these housing units are located in the city, as well as to show
+how the number of income restricted units has progressed over time.
+I did not strictly use this dataset, but performed some preprocesing of the data before
+I put it into the map. I did this because I wanted to show trends within certain neighborhoods as to the number of income restricted properties rather than just showing all of these units separately. I believe this gives users a better feel of the overall trends in different areas of Seattle.
+I also used the Seattle boundaries geoJSON file in order to construct my map. This dataset can be found at https://github.com/seattleio/seattle-boundaries-data/blob/master/data/zip-codes.geojson.
+My aim for this visualization was to provide a dashboard of sorts that would provide users with information about the location and evolution over time of income restricted housing units in Seattle. There is obviously no simple solution to the housing problem in Seattle and through this visualization I hope to provide users some historical as well as geographic context for the problem. In constructing this visualization I realize that users from Seattle will be able to extract more information from this graphic than those unfamiliar with the area, so in further refinements of this viz I would want to find another dataset that could provide more demographic information about each zip code which would make it easier for users to draw conclusions.
+Putting this visualization in an article I would probably place it towards the end of the article which would allow the uninformed readers to learn more about the problem before interacting with visualization.

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- https://www.seattletimes.com/seattle-news/politics/mayor-tim-burgess-unveils-growth-plan-for-27-neighborhoods-across-seattle/ -->
+  <title>Seattle Rent Restricted Housing</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+  <link href="//cdn.muicss.com/mui-0.9.38/css/mui.min.css" rel="stylesheet" type="text/css" />
+  <script src="//cdn.muicss.com/mui-0.9.38/js/mui.min.js"></script>
+  <style type="text/css">
+    #mapid {
+      height: 180px;
+    }
+    #map-container {
+      float: left;
+    }
+    #colorbar-container {
+      float:right;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="title-container">
+  </div>
+  <div id="map-container">
+    <div id="smap" style="width: 600px; height: 400px;"></div>
+  </div>
+  <div id="colorbar-container">
+    <div id="colorbar"></div>
+  </div>
+  <div id="graph"></div>
+
+  <!-- <script src="map.js"></script> -->
+  <script>
+    // source = http://palewi.re/posts/2012/03/26/leaflet-recipe-hover-events-features-and-polygons/
+    var fileName = 'testLatLong.csv'
+    var zipCodeData = 'zip-codes.geojson'
+    var map = L.map("smap", {
+      scrollWheelZoom: false,
+      touchZoom: false,
+      doubleClickZoom: false,
+      zoomControl: false,
+      dragging: false
+    }).setView([47.6062, -122.3321], 10);
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYW1wcmluY2UiLCJhIjoiY2pmMDBxZW8wMGczejJ3b2FxMG02OHR3bSJ9.hg-ExwLhRGNKmaGn0brncw', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      maxZoom: 18,
+      id: 'mapbox.streets',
+      accessToken: 'your.mapbox.access.token'
+    }).addTo(map);
+    var unitValues = [];
+    var maxUnits;
+    var minUnits;
+    var units = {};
+    var colorArray = ['#ffffe0', '#ffd59b', '#ffa474', '#f47461', '#db4551', '#b81b34', '#8b0000'];
+    var featureLayer = new L.GeoJSON();
+    // modified from chroma.js helper
+    function palette(value) {
+      // console.log(Math.round(value/((maxUnits-minUnits)/7)));
+
+      return Math.round(value / ((maxUnits - minUnits) / 6));
+    }
+
+    function style(feature, selected) {
+      var color = palette(units[feature.properties.GEOID10]);
+
+      // console.log("ZIP CODE: " + feature.properties.GEOID10);
+      // console.log("FUNCTION VALUE: " + colorArray[palette(units[feature.properties.GEOID10])]);
+      // console.log(units);
+      if (isNaN(color)) {
+        return {
+          color: "#2262CC",
+          weight: 0,
+          fillOpacity: 0,
+          fillColor: '#ffffe0'
+        }
+      }
+      if (selected != feature.properties.GEOID10) {
+        return {
+
+          color: "#2262CC",
+          weight: 0.2,
+          opacity: 0.6,
+          fillOpacity: 0.8,
+          fillColor: colorArray[color]
+        };
+      } else {
+        return {
+          color: '#2262CC',
+          weight: 2,
+          opacity: 0.6,
+          fillOpacity: 0.8,
+          fillColor: colorArray[color],
+        };
+      }
+
+    }
+
+    function updateData() {
+      d3.json(zipCodeData, function(error, collection) {
+        if (error) throw error;
+        collection.features.forEach(function(d) {
+
+          // unitValues.push(d.total_units)
+          var featureLayer = L.geoJSON(d, {
+            onEachFeature: onEachFeature,
+            style: style
+          }).addTo(map);
+
+        });
+
+      });
+    }
+
+
+
+    var selected = null;
+    var onEachFeature = function(feature, layer) {
+      updateDashboard()
+
+      // Load the default style.
+      if (feature.properties.GEOID10 != selected) {
+        console.log("first load check");
+        layer.setStyle(style(feature, selected));
+
+      } else {
+        layer.setStyle(style(feature, selected))
+      }
+      // Create a self-invoking function that passes in the layer
+      // and the properties associated with this particular record.
+      (function(layer, properties) {
+        // Create a mouseover event
+        layer.on("mouseover", function(e) {
+          // Change the style to the highlighted version
+
+
+          selected = feature.properties.GEOID10;
+          updateDashboard()
+          console.log("selected in map layer " + selected);
+          layer.setStyle(style(feature, selected));
+
+
+
+        });
+        layer.on("mouseout", function(e) {
+          // updateDashboard()
+          // selected = null;
+          // d3.selectAll("#graph").remove();
+          graphLayer.selectAll("*").remove();
+          //d3.select("#zip_code").remove();
+          // updateDashboard();
+
+          layer.setStyle(style(feature, null));
+        })
+
+
+      })(layer, feature.properties);
+    };
+
+
+    var width = 600;
+    var height = 400;
+    var padding = 50;
+
+    var colorBarHeight = 100;
+    var colorBarLayer = d3.select("#colorbar").append("svg")
+      .attr("width", width)
+      .attr("height", colorBarHeight)
+    var graphLayer = d3.select("#graph").append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("float", "left")
+
+    colorBarLayer.selectAll("rect").append("rect").data(colorArray).enter().append("rect")
+      .attr("x", function(d) {
+        return ((width - padding) / colorArray.length) * colorArray.indexOf(d)
+      })
+      .attr("y", 10)
+      .attr("width", (width - padding) / colorArray.length)
+      .attr("height", 20)
+      .attr("fill", function(d) {
+        return d
+      });
+
+    // colorBarLayer.selectAll("text").
+
+    var getYear = d3.timeParse("%Y");
+    var x = d3.scaleTime().range([padding, width - padding]);
+    var y = d3.scaleLinear().range([height - padding, padding]);
+    var line = d3.line()
+
+      .x(function(d) {
+        return x(getYear(d.key))
+      })
+      .y(function(d) {
+        return y(d.value)
+      })
+       .curve(d3.curveMonotoneX) ;
+    map.addLayer(featureLayer)
+    g = graphLayer.append("g")
+
+    function updateDashboard() {
+      d3.json('json_first.json', function(error, collection) {
+        if (error) throw error;
+        collection.forEach(function(d) {
+          unitValues.push(d.total_units);
+          units[d.zip_code] = d.total_units
+
+          if (selected == d.zip_code) {
+            graphLayer.append("text").text(d.zip_code)
+              .attr("x", padding)
+              .attr("y", padding)
+              .attr("id", "zip_code")
+            console.log(d.time_series);
+            if (selected != null) {
+              var time_list = d3.entries(d.time_series)
+              x.domain(d3.extent(time_list, function(d) {
+                return getYear(d.key);
+              }));
+              y.domain(d3.extent(time_list, function(d) {
+                return d.value;
+              }));
+              graphLayer.append("g").call(d3.axisBottom(x))
+                .attr("transform", "translate(0," + (height-padding) + ")")
+                .attr("y", height)
+                .select(".domain").remove();
+              graphLayer.append("g")
+                .call(d3.axisLeft(y))
+                .attr("x", padding)
+                .attr("transform", "translate(0," + padding + ")")
+                .attr("id", "yax");
+              if (time_list.length != 1) {
+              graphLayer.append("path")
+                .datum(time_list)
+                .attr("fill", "none")
+                .attr("stroke", "steelblue")
+                .attr("d", line);
+              }
+              else {
+                graphLayer.selectAll("dot")
+                .data(time_list)
+                .enter().append("circle")
+                .attr("fill", "steelblue")
+                .attr("r", 3)
+                .attr("cx", function(d) { return x(getYear(d.key)); })
+                .attr("cy", function(d) { return y(d.value); })
+
+              }
+
+              // time_list.forEach(function(x) {
+              //
+              // });
+            }
+
+          }
+        })
+        maxUnits = d3.max(unitValues);
+        minUnits = d3.min(unitValues);
+        // console.log(minUnits);
+        // console.log(maxUnits);
+      })
+    }
+    $(document).ready(function() {
+      console.log("first load");
+      console.log("selected in first load" + selected);
+
+
+      updateDashboard();
+      updateData();
+
+    })
+  </script>
+</body>
+
+</html>
