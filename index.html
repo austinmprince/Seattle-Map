@@ -1,280 +1,496 @@
 <!DOCTYPE html>
-<html>
-
 <head>
-  <!-- https://www.seattletimes.com/seattle-news/politics/mayor-tim-burgess-unveils-growth-plan-for-27-neighborhoods-across-seattle/ -->
-  <title>Seattle Rent Restricted Housing</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
-  <link href="//cdn.muicss.com/mui-0.9.38/css/mui.min.css" rel="stylesheet" type="text/css" />
-  <script src="//cdn.muicss.com/mui-0.9.38/js/mui.min.js"></script>
-  <style type="text/css">
-    #mapid {
-      height: 180px;
-    }
-    #map-container {
-      float: left;
-    }
-    #colorbar-container {
-      float:right;
-    }
-  </style>
+<meta charset="utf-8"/>
+<title>Seattle Rent Restricted Housing</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css" integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ==" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<link href="//cdn.muicss.com/mui-0.9.38/css/mui.min.css" rel="stylesheet" type="text/css" />
+<script src="//cdn.muicss.com/mui-0.9.38/js/mui.min.js"></script>
+<style type="text/css">
+body{
+	width: 1000px; /* how wide to make your web page */
+	margin: 0 auto;
+	padding: 0;
+	font:12px/16px Verdana, sans-serif; /* default font */
+}
+div#main{
+	background-color: #FFF;
+	margin: 0;
+	padding: 10px;
+}
+#mapid {
+	height: 180px;
+}
 
+#map-container {
+	float: left;
+}
+
+#colorbar-container {
+	float: right;
+}
+
+.legend {
+	line-height: 14px;
+	color: #555;
+}
+
+.legend i {
+	width: 18px;
+	height: 14px;
+	float: left;
+	margin-right: 5px;
+	opacity: 1;
+}
+
+.info {
+	padding: 6px 8px;
+	font: 12px/14px Arial, Helvetica, sans-serif;
+	background: white;
+	background: rgba(255, 255, 255, 0.8);
+	box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+	border-radius: 5px;
+}
+
+.info h4 {
+	margin: 0 0 5px;
+	color: #777;
+}
+</style>
 </head>
-
 <body>
-  <div id="title-container">
-  </div>
-  <div id="map-container">
-    <div id="smap" style="width: 600px; height: 400px;"></div>
-  </div>
-  <div id="colorbar-container">
-    <div id="colorbar"></div>
-  </div>
-  <div id="graph"></div>
+	<body>
+		<h3>Mayor Tim Burgess unveils growth plan for 27 Seattle neighborhoods</h3>
+		<p>
+			<b>
+				The plan would allow denser construction and taller buildings in 27 urban villages, from Lake City to Wallingford,
+				 Capitol Hill and Rainier Beach, and would expand the boundaries of 10 of
+				 those areas to connect development with transit.
+			 </b>
+		 </p>
+	  <p>
+	    Under a sweeping plan unveiled Thursday by Mayor Tim Burgess, Seattle would encourage
+	    more growth in more than two dozen neighborhoods across the city while
+	    requiring developers to help the city add thousands of apartments affordable to households with low incomes.
+	  </p>
+		<p>
+			The plan, which officials have been working on since then-Mayor Ed Murray proposed it more than two years ago,
+			 would allow denser construction and taller buildings in 27 urban villages, from Lake City to Wallingford,
+			 Capitol Hill and Rainier Beach, and would expand the boundaries of 10 of those areas to connect development with transit.
+		 </p>
+		 <p>
+			 Seattle’s urban villages are neighborhood nodes designated since the 1990s
+			 to accommodate most of the city’s growth.
+		 </p>
+		 <p>
+			 “There is a housing crisis in our city,” Burgess said, speaking to reporters at a Capitol
+			 Hill park. “I don’t know anyone who disagrees with the desire to create more affordable housing.”
+		 </p>
+		 <p>
+			 The zoning changes would trigger requirements for developers to build
+			 low-income housing as part of their projects or pay fees to help the city create such housing elsewhere.
+		 </p>
+	 <p>
+	 Those requirements are in place in the University District, downtown and South Lake Union,
+	 at certain Central District intersections and in the Chinatown International District and Uptown.
+	 The City Council agreed to upzone each of those neighborhoods earlier this year
+ </p>
 
-  <!-- <script src="map.js"></script> -->
-  <script>
-    // source = http://palewi.re/posts/2012/03/26/leaflet-recipe-hover-events-features-and-polygons/
-    var fileName = 'testLatLong.csv'
-    var zipCodeData = 'zip-codes.geojson'
-    var map = L.map("smap", {
-      scrollWheelZoom: false,
-      touchZoom: false,
-      doubleClickZoom: false,
-      zoomControl: false,
-      dragging: false
-    }).setView([47.6062, -122.3321], 10);
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYW1wcmluY2UiLCJhIjoiY2pmMDBxZW8wMGczejJ3b2FxMG02OHR3bSJ9.hg-ExwLhRGNKmaGn0brncw', {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-      maxZoom: 18,
-      id: 'mapbox.streets',
-      accessToken: 'your.mapbox.access.token'
-    }).addTo(map);
-    var unitValues = [];
-    var maxUnits;
-    var minUnits;
-    var units = {};
-    var colorArray = ['#ffffe0', '#ffd59b', '#ffa474', '#f47461', '#db4551', '#b81b34', '#8b0000'];
-    var featureLayer = new L.GeoJSON();
-    // modified from chroma.js helper
-    function palette(value) {
-      // console.log(Math.round(value/((maxUnits-minUnits)/7)));
+ <p>
+	 Changes to the 27 other neighborhoods would affect all blocks zoned for apartments and commercial buildings.
+ </p>
+ <div id="map-container">
+	 <div id="smap" style="width: 450px; height: 400px;"></div>
+ </div>
+ <!-- <div id="colorbar-container">
+	 <div id="colorbar"></div>
+ </div> -->
+ <div id="graph"></div>
 
-      return Math.round(value / ((maxUnits - minUnits) / 6));
-    }
+ <!-- <script src="map.js"></script> -->
+ <script>
+	 // source = http://palewi.re/posts/2012/03/26/leaflet-recipe-hover-events-features-and-polygons/
+	 var fileName = 'testLatLong.csv'
+	 var zipCodeData = 'zip-codes.geojson'
+	 var map = L.map("smap", {
+		 scrollWheelZoom: false,
+		 touchZoom: false,
+		 doubleClickZoom: false,
+		 zoomControl: false,
+		 dragging: false
+	 }).setView([47.6062, -122.3321], 10);
+	 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiYW1wcmluY2UiLCJhIjoiY2pmMDBxZW8wMGczejJ3b2FxMG02OHR3bSJ9.hg-ExwLhRGNKmaGn0brncw', {
+		 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+		 maxZoom: 18,
+		 id: 'mapbox.streets',
+		 accessToken: 'your.mapbox.access.token'
+	 }).addTo(map);
+	 var legend = L.control({
+		 position: 'bottomright'
+	 });
+	 var unitCount = [5, 535, 1065, 1595, 2125, 2655, 3185, 3250];
 
-    function style(feature, selected) {
-      var color = palette(units[feature.properties.GEOID10]);
+	 // var unitCount = [5, 10, 50, 100, 200, 500, 1000, 2000];
 
-      // console.log("ZIP CODE: " + feature.properties.GEOID10);
-      // console.log("FUNCTION VALUE: " + colorArray[palette(units[feature.properties.GEOID10])]);
-      // console.log(units);
-      if (isNaN(color)) {
-        return {
-          color: "#2262CC",
-          weight: 0,
-          fillOpacity: 0,
-          fillColor: '#ffffe0'
-        }
-      }
-      if (selected != feature.properties.GEOID10) {
-        return {
-
-          color: "#2262CC",
-          weight: 0.2,
-          opacity: 0.6,
-          fillOpacity: 0.8,
-          fillColor: colorArray[color]
-        };
-      } else {
-        return {
-          color: '#2262CC',
-          weight: 2,
-          opacity: 0.6,
-          fillOpacity: 0.8,
-          fillColor: colorArray[color],
-        };
-      }
-
-    }
-
-    function updateData() {
-      d3.json(zipCodeData, function(error, collection) {
-        if (error) throw error;
-        collection.features.forEach(function(d) {
-
-          // unitValues.push(d.total_units)
-          var featureLayer = L.geoJSON(d, {
-            onEachFeature: onEachFeature,
-            style: style
-          }).addTo(map);
-
-        });
-
-      });
-    }
+	 //var unitCount = [];
+	 console.log(unitCount);
+	 var colorArray = ['#ffffe0', '#ffd59b', '#ffa474', '#f47461', '#db4551', '#b81b34', '#8b0000'];
+	 var unitValues = [];
+	 var maxUnits;
+	 var minUnits;
+	 var units = {};
 
 
+	 var featureLayer = new L.GeoJSON();
+	 // modified from chroma.js helper
+	 function palette(value) {
+		 // console.log(Math.round(value/((maxUnits-minUnits)/7)));
 
-    var selected = null;
-    var onEachFeature = function(feature, layer) {
-      updateDashboard()
+		 return Math.round(value / ((maxUnits - minUnits) / 6));
+	 }
 
-      // Load the default style.
-      if (feature.properties.GEOID10 != selected) {
-        console.log("first load check");
-        layer.setStyle(style(feature, selected));
+	 function style(feature, selected) {
+		 var color = palette(units[feature.properties.GEOID10]);
 
-      } else {
-        layer.setStyle(style(feature, selected))
-      }
-      // Create a self-invoking function that passes in the layer
-      // and the properties associated with this particular record.
-      (function(layer, properties) {
-        // Create a mouseover event
-        layer.on("mouseover", function(e) {
-          // Change the style to the highlighted version
+		 // console.log("ZIP CODE: " + feature.properties.GEOID10);
+		 // console.log("FUNCTION VALUE: " + colorArray[palette(units[feature.properties.GEOID10])]);
+		 // console.log(units);
+		 if (isNaN(color)) {
+			 return {
+				 color: "#2262CC",
+				 weight: 0,
+				 fillOpacity: 0,
+				 fillColor: '#ffffe0'
+			 }
+		 }
+		 if (selected != feature.properties.GEOID10) {
+			 return {
 
+				 color: "#2262CC",
+				 weight: 0.2,
+				 opacity: 0.6,
+				 fillOpacity: 0.8,
+				 fillColor: colorArray[color]
+			 };
+		 } else {
+			 return {
+				 color: '#2262CC',
+				 weight: 2,
+				 opacity: 0.6,
+				 fillOpacity: 0.8,
+				 fillColor: colorArray[color],
+			 };
+		 }
 
-          selected = feature.properties.GEOID10;
-          updateDashboard()
-          console.log("selected in map layer " + selected);
-          layer.setStyle(style(feature, selected));
+	 }
 
+	 function addLegend() {
+		 console.log("called");
+		 var legend = L.control({
+			 position: 'bottomright'
+		 });
 
+		 console.log(unitCount);
+		 legend.onAdd = function(map) {
 
-        });
-        layer.on("mouseout", function(e) {
-          // updateDashboard()
-          // selected = null;
-          // d3.selectAll("#graph").remove();
-          graphLayer.selectAll("*").remove();
-          //d3.select("#zip_code").remove();
-          // updateDashboard();
+			 var div = L.DomUtil.create('div', 'info legend'),
 
-          layer.setStyle(style(feature, null));
-        })
-
-
-      })(layer, feature.properties);
-    };
-
-
-    var width = 600;
-    var height = 400;
-    var padding = 50;
-
-    var colorBarHeight = 100;
-    var colorBarLayer = d3.select("#colorbar").append("svg")
-      .attr("width", width)
-      .attr("height", colorBarHeight)
-    var graphLayer = d3.select("#graph").append("svg")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("float", "left")
-
-    colorBarLayer.selectAll("rect").append("rect").data(colorArray).enter().append("rect")
-      .attr("x", function(d) {
-        return ((width - padding) / colorArray.length) * colorArray.indexOf(d)
-      })
-      .attr("y", 10)
-      .attr("width", (width - padding) / colorArray.length)
-      .attr("height", 20)
-      .attr("fill", function(d) {
-        return d
-      });
-
-    // colorBarLayer.selectAll("text").
-
-    var getYear = d3.timeParse("%Y");
-    var x = d3.scaleTime().range([padding, width - padding]);
-    var y = d3.scaleLinear().range([height - padding, padding]);
-    var line = d3.line()
-
-      .x(function(d) {
-        return x(getYear(d.key))
-      })
-      .y(function(d) {
-        return y(d.value)
-      })
-       .curve(d3.curveMonotoneX) ;
-    map.addLayer(featureLayer)
-    g = graphLayer.append("g")
-
-    function updateDashboard() {
-      d3.json('json_first.json', function(error, collection) {
-        if (error) throw error;
-        collection.forEach(function(d) {
-          unitValues.push(d.total_units);
-          units[d.zip_code] = d.total_units
-
-          if (selected == d.zip_code) {
-            graphLayer.append("text").text(d.zip_code)
-              .attr("x", padding)
-              .attr("y", padding)
-              .attr("id", "zip_code")
-            console.log(d.time_series);
-            if (selected != null) {
-              var time_list = d3.entries(d.time_series)
-              x.domain(d3.extent(time_list, function(d) {
-                return getYear(d.key);
-              }));
-              y.domain(d3.extent(time_list, function(d) {
-                return d.value;
-              }));
-              graphLayer.append("g").call(d3.axisBottom(x))
-                .attr("transform", "translate(0," + (height-padding) + ")")
-                .attr("y", height)
-                .select(".domain").remove();
-              graphLayer.append("g")
-                .call(d3.axisLeft(y))
-                .attr("x", padding)
-                .attr("transform", "translate(0," + padding + ")")
-                .attr("id", "yax");
-              if (time_list.length != 1) {
-              graphLayer.append("path")
-                .datum(time_list)
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("d", line);
-              }
-              else {
-                graphLayer.selectAll("dot")
-                .data(time_list)
-                .enter().append("circle")
-                .attr("fill", "steelblue")
-                .attr("r", 3)
-                .attr("cx", function(d) { return x(getYear(d.key)); })
-                .attr("cy", function(d) { return y(d.value); })
-
-              }
-
-              // time_list.forEach(function(x) {
-              //
-              // });
-            }
-
-          }
-        })
-        maxUnits = d3.max(unitValues);
-        minUnits = d3.min(unitValues);
-        // console.log(minUnits);
-        // console.log(maxUnits);
-      })
-    }
-    $(document).ready(function() {
-      console.log("first load");
-      console.log("selected in first load" + selected);
+				 grades = unitCount,
+				 labels = ['<b>Units per Zip Code</b>'],
 
 
-      updateDashboard();
-      updateData();
+				 from, to;
 
-    })
-  </script>
+			 for (var i = 0; i < grades.length - 1; i++) {
+				 from = grades[i];
+				 to = grades[i + 1] - 1;
+
+				 labels.push(
+					 '<i style="background:' + colorArray[i] + '"></i> ' +
+					 from + ('&ndash;' + to));
+			 }
+			 div.innerHTML = labels.join('<br>');
+			 return div;
+
+
+		 };
+
+
+
+		 legend.addTo(map);
+
+	 }
+
+	 function updateData() {
+		 d3.json(zipCodeData, function(error, collection) {
+			 if (error) throw error;
+			 collection.features.forEach(function(d) {
+
+				 // unitValues.push(d.total_units)
+				 var featureLayer = L.geoJSON(d, {
+					 onEachFeature: onEachFeature,
+					 style: style
+				 }).addTo(map);
+
+			 });
+
+		 });
+	 }
+
+
+
+	 var selected = null;
+	 var onEachFeature = function(feature, layer) {
+		 updateDashboard()
+
+		 // Load the default style.
+		 if (feature.properties.GEOID10 != selected) {
+			 console.log("first load check");
+			 layer.setStyle(style(feature, selected));
+
+		 } else {
+			 layer.setStyle(style(feature, selected))
+		 }
+		 // Create a self-invoking function that passes in the layer
+		 // and the properties associated with this particular record.
+		 (function(layer, properties) {
+			 // Create a mouseover event
+			 layer.on("mouseover", function(e) {
+				 // Change the style to the highlighted version
+
+
+				 selected = feature.properties.GEOID10;
+				 updateDashboard()
+				 console.log("selected in map layer " + selected);
+				 layer.setStyle(style(feature, selected));
+
+
+
+			 });
+			 layer.on("mouseout", function(e) {
+				 // updateDashboard()
+				 // selected = null;
+				 // d3.selectAll("#graph").remove();
+				 graphLayer.selectAll("*").remove();
+				 //d3.select("#zip_code").remove();
+				 // updateDashboard();
+
+				 layer.setStyle(style(feature, null));
+			 })
+
+
+		 })(layer, feature.properties);
+	 };
+
+
+	 var width = 500;
+	 var height = 400;
+	 var padding = 85;
+	 var textPadding = 30;
+
+	 var colorBarHeight = 100;
+	 var colorBarLayer = d3.select("#colorbar").append("svg")
+		 .attr("width", width)
+		 .attr("height", colorBarHeight)
+	 var graphLayer = d3.select("#graph").append("svg")
+		 .attr("width", width)
+		 .attr("height", height)
+		 .attr("float", "left")
+
+	 colorBarLayer.selectAll("rect").append("rect").data(colorArray).enter().append("rect")
+		 .attr("x", function(d) {
+			 return ((width - padding) / colorArray.length) * colorArray.indexOf(d)
+		 })
+		 .attr("y", 10)
+		 .attr("width", (width - padding) / colorArray.length)
+		 .attr("height", 20)
+		 .attr("fill", function(d) {
+			 return d
+		 });
+
+
+	 var getYear = d3.timeParse("%Y");
+	 var x = d3.scaleTime().range([padding, width - padding]).domain([padding, width - padding]);
+	 var y = d3.scaleLinear().range([height - padding, padding])
+		 .domain([padding, width - padding]);
+	 var line = d3.line()
+		 .x(function(d) {
+			 return x(getYear(d.key))
+		 })
+		 .y(function(d) {
+			 return y(d.value)
+		 })
+		 .curve(d3.curveMonotoneX);
+	 map.addLayer(featureLayer)
+	 g = graphLayer.append("g")
+
+	 function updateDashboard() {
+		 d3.json('json_first.json', function(error, collection) {
+			 if (error) throw error;
+			 collection.forEach(function(d) {
+				 unitValues.push(d.total_units);
+				 units[d.zip_code] = d.total_units
+
+
+				 if (selected == d.zip_code) {
+					 graphLayer.append("text").text("Zip Code: " + d.zip_code)
+						 .attr("x", (width - textPadding ) / 2)
+						 .attr("y", textPadding)
+						 .attr("id", "zip_code")
+						 .style("text-transform", "uppercase")
+						 .style("font-size", "18px")
+							 .attr("text-anchor", "middle");
+
+
+					 graphLayer.append("text").text("Total Income Restricted Housing Units: " + d.total_units)
+						 .attr("x", (width - textPadding) / 2)
+						 .attr("y", 1.65 * textPadding)
+						 .style("text-align", "center")
+							 .attr("text-anchor", "middle");;
+
+					 graphLayer.append("text").text("Income Restricted Housing Units Added Per Year")
+						 .attr("x", (width / 2) - textPadding)
+						 .attr("y", 2.25 * textPadding)
+						 .style("text-align", "center")
+						 .attr("text-anchor", "middle")
+						 .style("text-decoration", "underline")
+
+					 // console.log(d.time_series);
+					 if (selected != null) {
+						 var time_list = d3.entries(d.time_series)
+						 x.domain(d3.extent(time_list, function(d) {
+							 return getYear(d.key);
+						 }));
+						 y.domain(d3.extent(time_list, function(d) {
+							 return d.value;
+						 }));
+
+
+
+						 if (time_list.length != 1) {
+							 graphLayer.append("g")
+							 	.style("font", "8px times")
+								 .call(d3.axisBottom(x))
+
+								 .attr("transform", "translate(0," + (height - padding) + ")");
+
+							 graphLayer.append("g")
+							 .style("font", "10px times")
+								 .call(d3.axisLeft(y))
+								 .attr("transform", "translate(" + padding + ", 0)")
+
+							 graphLayer.append("path")
+								 .datum(time_list)
+								 .attr("fill", "none")
+								 .attr("stroke", "steelblue")
+								 .attr("d", line);
+						 } else {
+							 graphLayer.append("text")
+							 .text("Insufficient Data for Time Series")
+							 .attr("x", (width  - padding) / 2)
+							 .attr("y", (height)  / 2)
+							 .attr("text-anchor", "middle");
+
+
+						 }
+
+						 // time_list.forEach(function(x) {
+						 //
+						 // });
+					 }
+
+				 }
+			 })
+			 // insert function here for unitCounts
+			 maxUnits = d3.max(unitValues);
+			 minUnits = d3.min(unitValues);
+			 // console.log(maxUnits);
+			 // console.log(minUnits);
+
+			 // for (var i = 6; i >= 0; i--) {
+			 //   unitCount[i] = (i * maxUnits + (7 - i) * minUnits) / 7;
+			 // }
+		 })
+		 // console.log(unitCount);
+	 }
+	 $(document).ready(function() {
+		 // console.log("first load");
+		 // console.log("selected in first load" + selected);
+
+
+		 updateDashboard();
+		 updateData();
+		 console.log(unitCount);
+		 addLegend();
+
+	 })
+ </script>
+ <p>
+	 Also affected would be blocks zoned for single-family houses within the urban villages or in areas where the urban villages would expand.
+ </p>
+
+ <p>
+	 Zoning would be changed on those blocks to allow more housing options, such as cottages, row homes and small apartment buildings.
+ </p>
+ <p>
+	 The vast majority of the city’s blocks now zoned for single-family houses would not be affected.
+	  Historic districts and certain shoreline areas also would not be affected.
+	</p>
+	<p>The zoning changes would vary in scale. In some cases, the city would allow high-rises on blocks now restricted to mid-rises.
+		In other cases, seven-story buildings would be allowed, up from four stories. Elsewhere, the changes would be more subtle.
+	</p>
+	<p>
+		The City Council will consider the plan next year while holding several public hearings.
+		Rob Johnson, who chairs the council’s land-use committee and represents District 4, will take the lead.
+	</p>
+	<p>Jenny Durkan, elected mayor Tuesday, will be sworn in Nov. 28. Officials said they’re moving
+		ahead with the plan now because an environmental review has been completed.
+		Burgess said Durkan supports the plan and sees
+	</p>
+	<p>
+		Under the new requirements, which officials call the Mandatory Housing Affordability program,
+		developers must devote a certain percentage of their projects to
+		 rent-restricted and income-restricted apartments or pay equivalent fees.
+		 The city uses such fees to help nonprofits build low-income housing.
+	 </p>
+	 <p>
+		 Murray called the arrangement, which was recommended in 2015 by his
+		 Housing Affordability and Livability Advisory committee, a “grand bargain.”
+	 </p>
+	 <p>For the neighborhoods in Thursday’s plan, the percentages would range from
+	 5 percent to 11 percent. The fees would range from $5 to $32.75 per square foot.</p>
+	 <p>The goal is for the upzones and new requirements on developers to
+	 yield at least 6,000 low-income apartments over 10 years, Burgess said.</p>
+	 <p>Had the requirements been in effect for the last two years, Seattle
+	 might already have added as many as 2,000 such apartments, said Sam Assefa, the city’s head planner.</p>
+	 <p>Assefa said he expects the current construction boom to continue for
+	 at least another year or two.</p>
+	 <p>A family of four with an income of about $57,600 would qualify for a
+	 two-bedroom apartment created by the program and pay about $1,300 per month in rent, according to officials.</p>
+	 <p>An individual making about $40,000 would qualify for a one-bedroom
+	 apartment and pay about $1,000 per month.</p>
+	 <p>The city’s environmental review looked at two approaches – upzoning each
+	 neighborhood with the same intensity or upzoning them differently, to try to prevent displacement.</p>
+	 <p>The second option called for larger zoning changes in well-off neighborhoods
+	 with residents unlikely to be displaced by development, such as Wallingford, and for
+	 smaller zoning changes in less-affluent neighborhoods with residents at greater
+	 risk of being displaced, such as Rainier Beach.</p>
+	 <p>The plan released Thursday is a compromise between the two approaches,
+	 officials said.</p>
+	 <p>They said they already have discussed the proposed changes with thousands
+	  of Seattle residents at meetings, at doors, online and over the phone.</p>
+	  <div id="title-container">
+	  </div>
+
+	</body>
+
+	</html>
+
+
+
+<!-- CONTENT HERE -->
+
 </body>
-
 </html>
